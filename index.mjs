@@ -115,6 +115,25 @@ app.get("/", (req, res) => {
   res.send("MCP Server cho CAO TO BIG MEN đang hoạt động!");
 });
 
+// --- THÊM API REST THÔNG THƯỜNG DÀNH CHO BOTCAKE ---
+app.post("/api/add_tag", (req, res) => {
+  const { customer_id, tag_name } = req.body;
+  console.log(`[REST API] Đang gắn thẻ '${tag_name}' cho khách ${customer_id}...`);
+  res.json({ 
+    success: true, 
+    message: `Đã gắn thẻ "${tag_name}" thành công cho khách ${customer_id}.` 
+  });
+});
+
+app.post("/api/remove_tag", (req, res) => {
+  const { customer_id, tag_name } = req.body;
+  console.log(`[REST API] Đang gỡ thẻ '${tag_name}' cho khách ${customer_id}...`);
+  res.json({ 
+    success: true, 
+    message: `Đã gỡ thẻ "${tag_name}" thành công cho khách ${customer_id}.` 
+  });
+});
+
 // Lấy Port động từ biến môi trường (Render.com yêu cầu điều này)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
