@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Tools Admin — Cao To Big Men</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #1a1d27;
+      --bg-card: #21242f;
+      --bg-card-hover: #282c3a;
+      --bg-input: #161922;
+      --border: #2d3142;
+      --border-focus: #6366f1;
+      --text-primary: #f1f3f9;
+      --text-secondary: #9ba1b7;
+      --text-muted: #6b7194;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-glow: rgba(99, 102, 241, 0.15);
+      --success: #34d399;
+      --success-bg: rgba(52, 211, 153, 0.1);
+      --danger: #f87171;
+      --danger-bg: rgba(248, 113, 113, 0.1);
+      --warning: #fbbf24;
+      --warning-bg: rgba(251, 191, 36, 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .header h1 span {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 14px;
+      margin-left: 8px;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--success);
+      background: var(--success-bg);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 22px;
+      flex: 1;
+      transition: var(--transition);
+    }
+
+    .stat-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .toolbar h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #818cf8);
+      color: white;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+    }
+
+    .btn-danger:hover {
+      background: rgba(248, 113, 113, 0.2);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .btn-success {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    .btn-success:hover {
+      background: rgba(52, 211, 153, 0.2);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    /* Tool Cards */
+    .tool-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .tool-card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .tool-card-header {
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tool-card-header:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .tool-name-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tool-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .tool-name {
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--accent-hover);
+    }
+
+    .tool-param-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-input);
+      padding: 2px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .tool-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      transition: var(--transition);
+      font-size: 18px;
+    }
+
+    .tool-card.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .tool-card-body {
+      display: none;
+      padding: 0 22px 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .tool-card.expanded .tool-card-body {
+      display: block;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-top: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Parameters Table */
+    .params-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 22px;
+      margin-bottom: 10px;
+    }
+
+    .params-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .params-table th {
+      background: var(--bg-input);
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .params-table td {
+      padding: 10px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .params-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .params-table td input, .params-table td select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-primary);
+      width: 100%;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .params-table td input:focus, .params-table td select:focus {
+      border-color: var(--border-focus);
+    }
+
+    .param-required {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .param-remove-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+
+    .param-remove-btn:hover {
+      color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    /* Enum Tags */
+    .enum-section {
+      margin-top: 14px;
+    }
+
+    .enum-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .enum-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: var(--accent-hover);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .enum-tag button {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .enum-tag button:hover {
+      color: var(--danger);
+    }
+
+    .enum-input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .enum-input-row input {
+      flex: 1;
+    }
+
+    /* Card Footer */
+    .tool-card-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      font-size: 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+      min-width: 280px;
+    }
+
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--accent); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 540px;
+      padding: 28px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+      animation: scaleIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state p { font-size: 15px; margin-bottom: 20px; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .stats-bar { flex-direction: column; }
+      .header-inner { flex-direction: column; gap: 12px; }
+      .toolbar { flex-direction: column; gap: 12px; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="header-icon">🔧</div>
+        <h1>MCP Tools Admin <span>Cao To Big Men</span></h1>
+      </div>
+      <div class="header-status">
+        <div class="status-dot"></div>
+        Server đang hoạt động
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-label">Tổng số Tools</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Tổng Parameters</div>
+        <div class="stat-value" id="stat-params">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Có Enum</div>
+        <div class="stat-value" id="stat-enums">0</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <h2>📋 Danh sách Tools</h2>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-ghost btn-sm" onclick="refreshTools()">🔄 Tải lại</button>
+        <button class="btn btn-primary" onclick="openAddModal()">＋ Thêm Tool</button>
+      </div>
+    </div>
+
+    <!-- Tool List -->
+    <div id="tools-list"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Add Tool Modal -->
+  <div class="modal-overlay" id="add-modal">
+    <div class="modal">
+      <h3>➕ Thêm Tool mới</h3>
+      <div class="form-group">
+        <label class="form-label">Tên Tool</label>
+        <input type="text" class="form-input" id="new-tool-name" placeholder="vd: send_message, get_order">
+        <div class="form-hint">Chỉ dùng chữ thường, số và dấu gạch dưới (_)</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mô tả (Description cho AI)</label>
+        <textarea class="form-textarea" id="new-tool-desc" placeholder="Mô tả chi tiết KHI NÀO AI nên gọi tool này..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeAddModal()">Hủy</button>
+        <button class="btn btn-primary" onclick="addNewTool()">Tạo Tool</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let toolsData = [];
+
+    // ===== API Calls =====
+    async function fetchTools() {
+      try {
+        const res = await fetch('/api/tools');
+        const data = await res.json();
+        toolsData = data.tools || [];
+        renderTools();
+        updateStats();
+      } catch (err) {
+        showToast('Không thể tải danh sách tools', 'error');
+      }
+    }
+
+    async function saveTools() {
+      try {
+        const res = await fetch('/api/tools', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tools: toolsData }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Đã lưu thành công! ✅', 'success');
+        } else {
+          showToast('Lỗi khi lưu: ' + data.error, 'error');
+        }
+      } catch (err) {
+        showToast('Không thể lưu cấu hình', 'error');
+      }
+    }
+
+    // ===== Render =====
+    function renderTools() {
+      const container = document.getElementById('tools-list');
+
+      if (toolsData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🔧</div>
+            <p>Chưa có tool nào. Bấm "Thêm Tool" để bắt đầu!</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = toolsData.map((tool, idx) => renderToolCard(tool, idx)).join('');
+    }
+
+    function renderToolCard(tool, idx) {
+      const props = tool.inputSchema?.properties || {};
+      const required = tool.inputSchema?.required || [];
+      const paramCount = Object.keys(props).length;
+
+      const paramsRows = Object.entries(props).map(([key, val]) => {
+        const isRequired = required.includes(key);
+        const enumVals = val.enum || [];
+        const enumHtml = enumVals.length > 0
+          ? `<div class="enum-tags" style="margin-top:4px;">${enumVals.map(e => `<span class="enum-tag" style="font-size:11px;padding:2px 8px;">${e}</span>`).join('')}</div>`
+          : '';
+
+        return `
+          <tr>
+            <td><input value="${key}" onchange="updateParamName(${idx}, '${key}', this.value)" style="font-family:monospace;font-weight:600;"></td>
+            <td>
+              <select onchange="updateParamType(${idx}, '${key}', this.value)">
+                <option value="string" ${val.type === 'string' ? 'selected' : ''}>String</option>
+                <option value="number" ${val.type === 'number' ? 'selected' : ''}>Number</option>
+                <option value="boolean" ${val.type === 'boolean' ? 'selected' : ''}>Boolean</option>
+              </select>
+            </td>
+            <td>
+              <input value="${val.description || ''}" onchange="updateParamDesc(${idx}, '${key}', this.value)">
+              ${enumHtml}
+            </td>
+            <td style="text-align:center;">
+              <input type="checkbox" class="param-required" ${isRequired ? 'checked' : ''} onchange="toggleRequired(${idx}, '${key}', this.checked)">
+            </td>
+            <td style="text-align:center;">
+              <button class="param-remove-btn" onclick="removeParam(${idx}, '${key}')" title="Xóa">✕</button>
+            </td>
+          </tr>`;
+      }).join('');
+
+      return `
+        <div class="tool-card" id="tool-${idx}">
+          <div class="tool-card-header" onclick="toggleCard(${idx})">
+            <div class="tool-name-group">
+              <div class="tool-icon">🔧</div>
+              <div>
+                <div class="tool-name">${tool.name}</div>
+              </div>
+              <span class="tool-param-count">${paramCount} params</span>
+            </div>
+            <div class="tool-actions">
+              <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteTool(${idx})">🗑 Xóa</button>
+              <span class="expand-icon">▼</span>
+            </div>
+          </div>
+          <div class="tool-card-body">
+            <div class="form-group">
+              <label class="form-label">📝 Description (AI đọc để quyết định khi nào gọi tool)</label>
+              <textarea class="form-textarea" onchange="updateDescription(${idx}, this.value)">${tool.description || ''}</textarea>
+              <div class="form-hint">⚡ Đây là phần QUAN TRỌNG NHẤT — viết càng rõ ràng, AI hành xử càng chính xác</div>
+            </div>
+
+            <div class="params-header">
+              <label class="form-label" style="margin:0;">⚙️ Parameters</label>
+              <button class="btn btn-ghost btn-sm" onclick="addParam(${idx})">＋ Thêm param</button>
+            </div>
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th style="width:20%;">Tên</th>
+                  <th style="width:15%;">Loại</th>
+                  <th>Mô tả</th>
+                  <th style="width:8%;text-align:center;">Bắt buộc</th>
+                  <th style="width:5%;"></th>
+                </tr>
+              </thead>
+              <tbody>${paramsRows}</tbody>
+            </table>
+
+            <div class="tool-card-footer">
+              <button class="btn btn-success" onclick="saveTool(${idx})">💾 Lưu thay đổi</button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ===== Card Actions =====
+    function toggleCard(idx) {
+      const card = document.getElementById(`tool-${idx}`);
+      card.classList.toggle('expanded');
+    }
+
+    function updateDescription(idx, value) {
+      toolsData[idx].description = value;
+    }
+
+    function updateParamName(toolIdx, oldName, newName) {
+      if (oldName === newName) return;
+      const props = toolsData[toolIdx].inputSchema.properties;
+      const required = toolsData[toolIdx].inputSchema.required || [];
+      
+      // Copy property with new name
+      props[newName] = props[oldName];
+      delete props[oldName];
+
+      // Update required array
+      const reqIdx = required.indexOf(oldName);
+      if (reqIdx > -1) required[reqIdx] = newName;
+    }
+
+    function updateParamType(toolIdx, paramName, value) {
+      toolsData[toolIdx].inputSchema.properties[paramName].type = value;
+    }
+
+    function updateParamDesc(toolIdx, paramName, value) {
+      toolsData[toolIdx].inputSchema.properties[paramName].description = value;
+    }
+
+    function toggleRequired(toolIdx, paramName, checked) {
+      const required = toolsData[toolIdx].inputSchema.required || [];
+      if (checked && !required.includes(paramName)) {
+        required.push(paramName);
+      } else if (!checked) {
+        const idx = required.indexOf(paramName);
+        if (idx > -1) required.splice(idx, 1);
+      }
+      toolsData[toolIdx].inputSchema.required = required;
+    }
+
+    function addParam(toolIdx) {
+      const name = prompt('Tên parameter mới (vd: order_id):');
+      if (!name) return;
+      const cleanName = name.trim().replace(/\s+/g, '_').toLowerCase();
+      toolsData[toolIdx].inputSchema.properties[cleanName] = {
+        type: 'string',
+        description: '',
+      };
+      renderTools();
+      // Re-expand the card
+      document.getElementById(`tool-${toolIdx}`).classList.add('expanded');
+    }
+
+    function removeParam(toolIdx, paramName) {
+      if (!confirm(`Xóa parameter "${paramName}"?`)) return;
+      delete toolsData[toolIdx].inputSchema.properties[paramName];
+      const required = toolsData[toolIdx].inputSchema.required || [];
+      const idx = required.indexOf(paramName);
+      if (idx > -1) required.splice(idx, 1);
+      renderTools();
+      document.getElementById(`tool-${toolIdx}`).classList.add('expanded');
+    }
+
+    async function saveTool(idx) {
+      await saveTools();
+      renderTools();
+    }
+
+    function deleteTool(idx) {
+      const name = toolsData[idx].name;
+      if (!confirm(`Xóa tool "${name}"? Hành động này không thể hoàn tác.`)) return;
+      toolsData.splice(idx, 1);
+      saveTools();
+      renderTools();
+      updateStats();
+    }
+
+    // ===== Add Tool Modal =====
+    function openAddModal() {
+      document.getElementById('add-modal').classList.add('active');
+      document.getElementById('new-tool-name').focus();
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.remove('active');
+      document.getElementById('new-tool-name').value = '';
+      document.getElementById('new-tool-desc').value = '';
+    }
+
+    function addNewTool() {
+      const name = document.getElementById('new-tool-name').value.trim().replace(/\s+/g, '_').toLowerCase();
+      const desc = document.getElementById('new-tool-desc').value.trim();
+
+      if (!name) {
+        showToast('Vui lòng nhập tên tool', 'error');
+        return;
+      }
+
+      if (toolsData.some(t => t.name === name)) {
+        showToast(`Tool "${name}" đã tồn tại`, 'error');
+        return;
+      }
+
+      toolsData.push({
+        name,
+        description: desc || `Mô tả cho tool ${name}`,
+        inputSchema: {
+          type: 'object',
+          properties: {},
+          required: [],
+        },
+      });
+
+      saveTools();
+      closeAddModal();
+      renderTools();
+      updateStats();
+
+      // Auto-expand the new card
+      setTimeout(() => {
+        const newIdx = toolsData.length - 1;
+        document.getElementById(`tool-${newIdx}`).classList.add('expanded');
+      }, 100);
+    }
+
+    // ===== Stats =====
+    function updateStats() {
+      document.getElementById('stat-total').textContent = toolsData.length;
+
+      let totalParams = 0;
+      let totalEnums = 0;
+      toolsData.forEach(tool => {
+        const props = tool.inputSchema?.properties || {};
+        totalParams += Object.keys(props).length;
+        Object.values(props).forEach(p => {
+          if (p.enum && p.enum.length > 0) totalEnums++;
+        });
+      });
+
+      document.getElementById('stat-params').textContent = totalParams;
+      document.getElementById('stat-enums').textContent = totalEnums;
+    }
+
+    // ===== Toast =====
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span>${icons[type] || ''}</span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ===== Utilities =====
+    function refreshTools() {
+      fetchTools();
+      showToast('Đã tải lại danh sách tools', 'info');
+    }
+
+    // ===== Init =====
+    fetchTools();
+  </script>
+</body>
+</html>

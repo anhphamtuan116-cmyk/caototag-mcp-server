@@ -1,0 +1,103 @@
+{
+  "tools": [
+    {
+      "name": "process_message",
+      "description": "Phân tích tin nhắn của khách hàng để tự động gắn nhãn. BẮT BUỘC gọi tool này MỖI KHI khách gửi tin nhắn mới. Truyền nguyên văn tin nhắn của khách vào message. Server sẽ tự động phát hiện số điện thoại và gắn nhãn phù hợp.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "ID của khách hàng (tự động lấy từ hệ thống)"
+          },
+          "message": {
+            "type": "string",
+            "description": "Nội dung tin nhắn gốc của khách hàng (copy nguyên văn)"
+          }
+        },
+        "required": [
+          "customer_id",
+          "message"
+        ]
+      }
+    },
+    {
+      "name": "add_tag",
+      "description": "Gắn nhãn (tag) thủ công cho khách hàng. Chỉ dùng khi cần gắn nhãn mà process_message chưa xử lý (ví dụ: gắn nhãn loại giày, size).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "ID của khách hàng"
+          },
+          "tag_name": {
+            "type": "string",
+            "description": "Tên nhãn cần gắn",
+            "enum": [
+              "Đang tư vấn",
+              "Đã chốt đơn",
+              "Dừng tư vấn",
+              "Hoàn tất",
+              "Lưu trữ",
+              "Chưa chuẩn bị",
+              "Đang Giao",
+              "Hoàn tất giao",
+              "Spam",
+              "Nội Bộ",
+              "Giày tây",
+              "Giày cầu lông",
+              "Giày sandal",
+              "Giày tennis",
+              "Giày đá banh",
+              "Giày sneaker",
+              "Giày thể thao",
+              "Giày chạy bộ",
+              "Giày bóng rổ",
+              "Dép",
+              "Quần",
+              "Áo",
+              "Áo khoác",
+              "Phụ kiện",
+              "Combo Skecher",
+              "Sinh nhật",
+              "45",
+              "46",
+              "47",
+              "48",
+              "49",
+              "50",
+              "51",
+              "52"
+            ]
+          }
+        },
+        "required": [
+          "customer_id",
+          "tag_name"
+        ]
+      }
+    },
+    {
+      "name": "remove_tag",
+      "description": "Gỡ một nhãn (tag) khỏi khách hàng khi trạng thái thay đổi hoặc gắn nhầm.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "ID của khách hàng"
+          },
+          "tag_name": {
+            "type": "string",
+            "description": "Tên nhãn cần gỡ"
+          }
+        },
+        "required": [
+          "customer_id",
+          "tag_name"
+        ]
+      }
+    }
+  ]
+}
