@@ -244,7 +244,31 @@ app.post("/api/tools", (req, res) => {
   }
 });
 
-// ===== REST API CHO BOTCAKE (giữ tương thích) =====
+// ===== REST API CHO BOTCAKE (giữ tương thích & Webhook) =====
+
+app.post("/api/process_message", (req, res) => {
+  const { customer_id, message } = req.body;
+  const results = [];
+
+  const phoneCheck = detectPhoneNumbers(message || "");
+  if (phoneCheck.found) {
+    console.log(
+      `[REST-AUTO-TAG] ✅ Phát hiện SĐT: ${phoneCheck.phones.join(", ")} → Gắn "Đã chốt đơn" cho khách ${customer_id}`
+    );
+    // TODO: Gọi API Pancake thật để gắn tag
+    results.push(`✅ Phát hiện số điện thoại: ${phoneCheck.phones.join(", ")}`);
+    results.push(`✅ Đã tự động gắn nhãn "Đã chốt đơn" cho khách ${customer_id}`);
+  } else {
+    console.log(`[REST-AUTO-TAG] ℹ️ Không phát hiện SĐT cho khách ${customer_id}`);
+    results.push("ℹ️ Không phát hiện số điện thoại trong tin nhắn.");
+  }
+
+  res.json({
+    success: true,
+    message: results.join(" | "),
+    detected_phones: phoneCheck.phones
+  });
+});
 
 app.post("/api/add_tag", (req, res) => {
   const { customer_id, tag_name } = req.body;
